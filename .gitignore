@@ -1,11 +1,2 @@
-# ignore jar, ear, war etc.
-*.class
-*.jar
-*.war
-*.ear
-
-# vscode
-.vscode/
-
 # compiled binary
 bin/
