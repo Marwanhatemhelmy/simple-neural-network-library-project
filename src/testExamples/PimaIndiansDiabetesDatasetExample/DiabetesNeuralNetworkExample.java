@@ -25,7 +25,7 @@ public class DiabetesNeuralNetworkExample {
             this.l1 = new Linear(8, 120, new Xavier(), true);
             this.l2 = new Linear(120, 1, new Xavier(), true);
 
-            saveLayers(new Layer[]{this.l1, this.l2});
+            registerLayers(new Layer[]{this.l1, this.l2});
         }
         
         public Tensor forward(Tensor x){

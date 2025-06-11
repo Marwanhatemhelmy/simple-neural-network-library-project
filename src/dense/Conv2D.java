@@ -10,36 +10,34 @@ import utils.tensors.convolution.Convolve2D;
 public class Conv2D extends Layer{
 
     public Tensor input;
-    public Tensor weights;
-    public Tensor biases;
     public Tensor output;
 
     public int c_out;
     public int c_in;
     public int stride;
+    public int padding = 0;
 
     public Conv2D(Tensor kernel, Tensor biases) {
         super(kernel, biases);
-
-        this.weights = kernel;
-        this.biases = biases;
     }
 
     public Conv2D(int in_channels, int out_channels, int kernelSize, int stride) {
         super(null, null);
 
-        this.weights = new Tensor(new int[]{out_channels, in_channels, kernelSize, kernelSize});
-        this.biases = new Tensor(new int[]{out_channels});
+        Tensor weights = new Tensor(new int[]{out_channels, in_channels, kernelSize, kernelSize});
+        Tensor biases = new Tensor(new int[]{out_channels});
+
         this.stride = stride;
         this.c_in = in_channels;
         this.c_out = out_channels;
 
         BasicInitialization basicInitialization = new BasicInitialization();
-        basicInitialization.uniform_(this.weights);
-        basicInitialization.uniform_(this.weights);
+
+        basicInitialization.uniform_(weights);
+        basicInitialization.uniform_(weights);
         
-        super.weights = this.weights;
-        super.biases = this.biases;
+        super.weights = weights;
+        super.biases = biases;
     }
 
     @Override

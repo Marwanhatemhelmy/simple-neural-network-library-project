@@ -2,50 +2,58 @@ package dense;
 
 import java.util.Arrays;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import randomization.BasicInitialization;
 import randomization.Randomizer;
 import tensor.Tensor;
 
 public class Linear extends Layer {
 
+    @JsonIgnore
     public Tensor input;
-    public Tensor weights;
-    public Tensor biases;
+    @JsonIgnore
     public Tensor output;
 
     public Linear(int in_features, int out_features, Randomizer randomizer, boolean normal){
         super(null, null);
-        this.weights = new Tensor(new int[]{out_features, in_features});
-        this.biases = new Tensor(new int[]{out_features});
+        
+        Tensor weights = new Tensor(new int[]{out_features, in_features});
+        Tensor biases = new Tensor(new int[]{out_features});
+
         if (normal){
-            randomizer.normal_(this.weights);
-            randomizer.normal_(this.biases);
+            randomizer.normal_(weights);
+            randomizer.normal_(biases);
         }else{
-            randomizer.uniform_(this.weights);
-            randomizer.uniform_(this.biases);
+            randomizer.uniform_(weights);
+            randomizer.uniform_(biases);
         }
-        super.weights = this.weights;
-        super.biases = this.biases;
+
+        super.weights = weights;
+        super.biases = biases;
     }
 
     public Linear(int in_features, int out_features){
         super(null, null);
-        this.weights = new Tensor(new int[]{out_features, in_features});
-        this.biases = new Tensor(new int[]{out_features});
         
-        new BasicInitialization().uniform_(this.biases);;
-        new BasicInitialization().uniform_(this.weights);
-        super.weights = this.weights;
-        super.biases = this.biases;
+        Tensor weights = new Tensor(new int[]{out_features, in_features});
+        Tensor biases = new Tensor(new int[]{out_features});
+        
+        new BasicInitialization().uniform_(biases);;
+        new BasicInitialization().uniform_(weights);
+
+        super.weights = weights;
+        super.biases = biases;
     }
 
-    public Linear(Tensor weights, Tensor biases){
+    @JsonCreator
+    public Linear(@JsonProperty("weights") Tensor weights, @JsonProperty("biases") Tensor biases){
         super(weights, biases);
         if (weights.rootTensor != weights || biases.rootTensor != biases){
             throw new IllegalArgumentException("weights & biases tensors must have not root tensor, they both must be their own root tensor");
         }
-        this.weights = weights;
-        this.biases = biases;
     }
 
     @Override

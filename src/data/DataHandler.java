@@ -2,6 +2,8 @@ package data;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -20,9 +22,16 @@ public class DataHandler {
         }
     }
 
-    // this method is still not created yet!
     public static Layer[] load(String filePath){
-        throw new UnsupportedOperationException("this method is still under maintainance");
+        ObjectMapper mapper = new ObjectMapper();
+        try{
+            String jsonString = Files.readString(Paths.get(filePath));
+            Layer[] layers = mapper.readValue(jsonString, Layer[].class);
+            return layers;
+        }catch (IOException e){
+            e.printStackTrace();
+            return null;
+        }
     }
 
 }

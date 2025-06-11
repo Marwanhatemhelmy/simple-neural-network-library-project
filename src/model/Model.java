@@ -8,21 +8,22 @@ public class Model {
 
     public Layer[] layers;
     Tensor[] parametersList;
-    
     int numberOfTrainableParameters = 2;
 
-    public void saveLayers(Layer[] layers){
+    public void registerLayers(Layer[] layers){
         this.layers = layers;
+        this.setParameters(this.numberOfTrainableParameters);
+    }
+
+    private void setParameters(int numberOfTrainableParameters){
         this.parametersList = new Tensor[layers.length*numberOfTrainableParameters];
-        int index = 0;
         for (int i=0;i<layers.length;i++){
             for (int j=0;j<numberOfTrainableParameters;j++){
                 if (j==0){
-                    parametersList[index] = layers[i].weights;
+                    parametersList[i * numberOfTrainableParameters + j] = layers[i].weights;
                 }else{
-                    parametersList[index] = layers[i].biases;
+                    parametersList[i * numberOfTrainableParameters + j] = layers[i].biases;
                 }
-                index++;
             }
         }
     }

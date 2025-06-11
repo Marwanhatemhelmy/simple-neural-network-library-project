@@ -3,6 +3,7 @@ package tensor;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import utils.matixOperations.broadCasting.BroadCastShape;
 import utils.matixOperations.broadCasting.FlattenMatrixBroadCastAddition;
@@ -28,13 +29,20 @@ public class Tensor{
 
     @JsonIgnore
     public Tensor rootTensor = this;
+    @JsonProperty
     private int[] indeces;
+    @JsonProperty
     private boolean gradFlag = false;
+    @JsonProperty
     public double[] data;
     @JsonIgnore
     public double[] grad;
+    @JsonProperty
     public int dimensions;
+    @JsonProperty
     public int[] shape;
+
+    public Tensor(){}
 
     public Tensor(int[] shape){
         this.data = new double[ArrayProduct.getProduct(shape)];
@@ -313,9 +321,18 @@ public class Tensor{
         return RegeneratingNdArray.convertToArrayList(this.data, this.shape);
     }
 
-    public void setData(double[] newData){
-        this.refreshTensor();
+    @JsonProperty
+    public void setData(double[] newData) {
+        if (this.rootTensor != this){
+            this.refreshTensor();
+        }
+
         this.data = newData;
+
+        if (this.grad == null) {
+            this.grad = new double[newData.length];
+        }
+
         ApplySubArrayToMainTensor.applySubArrayToMainTensor(this.indeces, this.data, this.rootTensor, this.gradFlag);
     }
     

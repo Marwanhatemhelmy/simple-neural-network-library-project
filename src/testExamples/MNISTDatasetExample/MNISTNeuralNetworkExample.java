@@ -24,7 +24,7 @@ public class MNISTNeuralNetworkExample {
             this.l1 = new Linear(784,120, new Xavier(), true);
             this.l2 = new Linear(120,10);
 
-            saveLayers(new Layer[]{this.l1, this.l2});
+            registerLayers(new Layer[]{this.l1, this.l2});
 
         }
         
