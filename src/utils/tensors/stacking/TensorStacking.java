@@ -1,6 +1,5 @@
 package utils.tensors.stacking;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 
 import tensor.Tensor;
@@ -36,7 +35,8 @@ public class TensorStacking {
 
     public static double[] getStackedDataFlattened(Tensor[] tensors){
 
-        ArrayList<Double> data = new ArrayList<Double>();
+        double[] data = new double[tensors.length * tensors[0].data.length];
+        int dataIndex = 0;
 
         for (int i=0;i<tensors.length;i++){
             if (i!=0){
@@ -45,10 +45,11 @@ public class TensorStacking {
                 }
             }
             for (int j=0;j<tensors[i].data.length;j++){
-                data.add(tensors[i].data[j]);
+                data[dataIndex] = tensors[i].data[j];
+                dataIndex++;
             }
         }
 
-        return data.stream().mapToDouble(Double::doubleValue).toArray();
+        return data;
     }
 }

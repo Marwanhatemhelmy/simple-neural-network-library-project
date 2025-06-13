@@ -282,10 +282,13 @@ public class Tensor{
     }
 
     public Tensor get(int indeces[]){
-        this.refreshTensor();
-        Tensor subTensor = new Tensor(VectorActualValuesAtIndeces.vectorActualValuesAtIndeces(AllocateSubArrayInFlattenArray.getIndices(this.shape, indeces), this.data));
-        subTensor.grad = VectorActualValuesAtIndeces.vectorActualValuesAtIndeces(AllocateSubArrayInFlattenArray.getIndices(this.shape, indeces), this.grad);
-        subTensor.indeces = VectorActualValuesAtIndeces.vectorActualValuesAtIndeces(AllocateSubArrayInFlattenArray.getIndices(this.shape, indeces), this.indeces);
+        if (this.rootTensor != this){
+            this.refreshTensor();
+        }
+        int[] subTensorIndeces = AllocateSubArrayInFlattenArray.getIndices(this.shape, indeces);
+        Tensor subTensor = new Tensor(VectorActualValuesAtIndeces.vectorActualValuesAtIndeces(subTensorIndeces, this.data));
+        subTensor.grad = VectorActualValuesAtIndeces.vectorActualValuesAtIndeces(subTensorIndeces, this.grad);
+        subTensor.indeces = VectorActualValuesAtIndeces.vectorActualValuesAtIndeces(subTensorIndeces, this.indeces);
         subTensor.dimensions = (this.dimensions - indeces.length);
         subTensor.shape = AllocateSubArrayInFlattenArray.getShape(indeces.length, this.shape);
         subTensor.rootTensor = this.rootTensor;
