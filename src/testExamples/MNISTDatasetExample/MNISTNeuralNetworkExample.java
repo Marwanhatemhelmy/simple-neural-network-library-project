@@ -21,8 +21,8 @@ public class MNISTNeuralNetworkExample {
 
         public SimpleModel(){
 
-            this.l1 = new Linear(784,120, new Xavier(), true);
-            this.l2 = new Linear(120,10);
+            this.l1 = new Linear(784,200, new Xavier(), false);
+            this.l2 = new Linear(200,10);
 
             registerLayers(new Layer[]{this.l1, this.l2});
 
@@ -77,21 +77,28 @@ public class MNISTNeuralNetworkExample {
 
         SimpleModel model = new SimpleModel();
 
-        MNISTReader mnistReader = new MNISTReader(1000);
-        DataSet dataSet = new MnistDataSetObj(mnistReader.images,mnistReader.labels);
-        DataLoader dataLoader = new DataLoader(dataSet, 100);
+        MNISTReader mnistReader = new MNISTReader(0,10000);
+        DataSet dataSet = new MnistDataSetObj(mnistReader.trainingImages,mnistReader.trainingLabels);
+        System.out.println("finished dataset");
+        DataLoader dataLoader = new DataLoader(dataSet, 64);
+
+        long loadEndTime = System.currentTimeMillis();
+        long loadDuration = loadEndTime-startTime;
+
+        System.out.println("loading duration : "+loadDuration);
+        System.out.println("loaded images");
 
         Adam optimizer = new Adam(0.001, 0.9, 0.999, 1e-8);
 
-        for (int i=0;i<5;i++){
-            for (int j=0;j<dataLoader.batches.length;j++){
+        for (int i=0;i<13;i++){
+            for (int j=0;j<dataLoader.totalBatches;j++){
 
                 // squeezing at dimension 1 , to make it 1d instead of 2d tensor
-                if (dataLoader.batches[j][1].dimensions != 1){
-                    dataLoader.batches[j][1].squeez_(1);
+                if (dataLoader.batchAt(j)[1].dimensions != 1){
+                    dataLoader.batchAt(j)[1].squeez_(1);
                 }
-                
-                model.backward(model.forward(dataLoader.batches[j][0]), dataLoader.batches[j][1]);
+
+                model.backward(model.forward(dataLoader.batchAt(j)[0]), dataLoader.batchAt(j)[1]);                
                 optimizer.updateParameters(model.parameters());
                 model.zeroGrad();
             }
@@ -101,8 +108,8 @@ public class MNISTNeuralNetworkExample {
         // evaluating
         int correct = 0;
         int wrong = 0;
-        for (int eval = 0;eval<mnistReader.labels.length;eval++){
-            if (checkIfMax(mnistReader.labels[eval], model.eval(new Tensor(mnistReader.images[eval])).data)){
+        for (int eval = 0;eval<mnistReader.validationLabels.length;eval++){
+            if (checkIfMax(mnistReader.validationLabels[eval], model.eval(new Tensor(mnistReader.validationImages[eval])).data)){
                 correct++;
             }else{
                 wrong ++;

@@ -10,6 +10,7 @@ public class DataLoader {
     public int[] indeces;
     public int batchSpan;
     public Tensor[][] batches;
+    public int totalBatches;
 
     public DataLoader(DataSet dataset, int batchSize){
         this.dataset = dataset;
@@ -17,8 +18,13 @@ public class DataLoader {
         this.batchSpan = dataset.atIndex(0).length;
         this.indeces = new int[dataset.len()];
         this.batches = new Tensor[this.dataset.len()/this.batchSize][this.batchSpan];
+        this.totalBatches = this.dataset.len()/this.batchSize;
         this.setIndeces();
         this.setBatches();
+    }
+
+    public Tensor[] batchAt(int batchIndex){
+        return this.batches[batchIndex];
     }
 
     private void setIndeces(){
@@ -49,6 +55,7 @@ public class DataLoader {
             Tensor[] sample = this.dataset.atIndex(this.indeces[i]);
             insertSampleTensorsInSamplesArray(samples, sample, i);
             handelFinishedBatch(i, samples, batchIndexWrapper);
+            System.out.println("sample "+(i+1));
         }
     }
 
