@@ -55,7 +55,6 @@ public class DataLoader {
             Tensor[] sample = this.dataset.atIndex(this.indeces[i]);
             insertSampleTensorsInSamplesArray(samples, sample, i);
             handelFinishedBatch(i, samples, batchIndexWrapper);
-            System.out.println("sample "+(i+1));
         }
     }
 
